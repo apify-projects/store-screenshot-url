@@ -7,7 +7,7 @@ const { APIFY_DEFAULT_KEY_VALUE_STORE_ID } = process.env;
 Apify.main(async () => {
     // Load query from input
     const input = await Apify.getValue('INPUT');
-    const { url, useApifyProxy, waitUntil, delay, width } = parseInput(input);
+    const { url, useApifyProxy, waitUntil, delay, width } = await parseInput(input);
 
     const browser = await Apify.launchPuppeteer({
         headless: true,

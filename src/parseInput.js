@@ -1,8 +1,9 @@
+const Apify = require('apify');
 const _ = require('lodash');
 const url = require('url');
 const { crash } = require('./utils');
 
-function parseInput(input) {
+async function parseInput(input) {
     if (!input) crash('Did not receive input. Please make sure that INPUT is stored in Key-Value store');
     const parsedInput = {};
 
@@ -36,6 +37,15 @@ allowed values: "${waitUntilOptions.join('", "')}"`);
     parsedInput.delay = input.delay;
 
     parsedInput.useApifyProxy = !!input.useApifyProxy;
+    if (parsedInput.useApifyProxy) {
+        const { client } = Apify;
+        const me = await client.users.getUser();
+        if (!me.proxy.groups.length) {
+            console.log('You have selected that Apify Proxy should be used to take a screenshot');
+            console.log('but you currently do not have access to any proxy groups.');
+            crash('Please contact our support if you are insterested in Apify Proxy.');
+        }
+    }
 
     return parsedInput;
 }
