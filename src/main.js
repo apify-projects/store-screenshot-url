@@ -28,7 +28,7 @@ Apify.main(async () => {
     console.log('Saving screenshot');
     await saveScreenshot(page);
     console.log('Screenshot saved you can view it here:');
-
+    console.log(`https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/OUTPUT?disableRedirect=true`);
     await page.close();
     await browser.close();
 });

@@ -46,3 +46,4 @@
         }
     },
     "required": ["url", "waitUntil"]
+}
