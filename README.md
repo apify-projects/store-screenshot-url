@@ -10,8 +10,11 @@ Input of this actor should be JSON containing filter specification. Allowed filt
 | ----- | ---- | ----------- | -------------- |
 | url | String | Search term | Any string value |
 | waitUntil | String | When should the screenshot be taken | One of:<br>"load"<br>"domcontentloaded"<br>"networkidle2"<br>"networkidle0" |
+| delay | Number | Delay before the screenshot is taken after the waitUntil finishes | Minimum: 0, Maximum: 3600000 |
+| viewportWidth | Number | How wide should the website and screenshot be | Minimum: 100, Maximum: 3840 |
+| useProxy | Boolean | Should random proxy be used | - |
 
 ## OUTPUT
 
-Once the actor finishes, it will output a screenshot of the website into file called OUTPUT.png
-stored in Key-Value store.
+Once the actor finishes, it will output a screenshot of the website into a file called OUTPUT
+stored in Key-Value store associated with the run.
