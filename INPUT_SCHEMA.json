@@ -45,5 +45,4 @@
             "groupCaption": "Proxy"
         }
     },
-    "required": ["url", "waitUntil", "viewportWidth"]
-}
+    "required": ["url", "waitUntil"]
