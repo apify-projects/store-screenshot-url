@@ -7,7 +7,8 @@
             "title": "URL",
             "type": "string",
             "description": "What to search Kickstarter for",
-            "editor": "textfield"
+            "editor": "textfield",
+            "prefill": "https://www.apify.com/"
         },
         "waitUntil": {
             "title": "Wait until",
@@ -17,7 +18,32 @@
             "enum": ["load", "domcontentloaded", "networkidle2", "networkidle0"],
             "enumTitles": ["Page is opened", "Content of the page is loaded", "Network is nearly idle", "Network is idle"],
             "editor": "select"
+        },
+        "delay": {
+            "title": "Delay before screenshot",
+            "type": "integer",
+            "description": "Add's delay before a screenshot is taken. Mimimum is 0, maximum is 5 minutes (3600000ms)",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 3600000,
+            "unit": "ms"
+        },
+        "viewportWidth": {
+            "title": "Width",
+            "type": "integer",
+            "description": "How wide should the website's viewport be",
+            "default": 1280,
+            "minimum": 100,
+            "maximum": 3840,
+            "unit": "px"
+        },
+        "useProxy": {
+            "title": "Use Apify Proxy",
+            "type": "boolean",
+            "default": false,
+            "groupCaption": "Proxy",
+            "groupDescription": "If checked, then the request will go to through one random proxy that you have access to"
         }
     },
-    "required": []
+    "required": ["url", "waitUntil", "viewportWidth"]
 }
