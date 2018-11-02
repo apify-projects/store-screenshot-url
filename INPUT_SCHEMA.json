@@ -36,13 +36,6 @@
             "minimum": 100,
             "maximum": 3840,
             "unit": "px"
-        },
-        "useApifyProxy": {
-            "title": "Use Apify Proxy",
-            "description": "If checked, then the request will go to through one random proxy that you have access to",
-            "type": "boolean",
-            "default": false,
-            "groupCaption": "Proxy"
         }
     },
     "required": ["url", "waitUntil"]
