@@ -36,6 +36,12 @@
             "minimum": 100,
             "maximum": 3840,
             "unit": "px"
+        },
+        "scrollToBottom": {
+            "title": "Scroll to Bottom",
+            "type": "boolean",
+            "description": "Scroll to the bottom of the page before taking a screenshot",
+            "default": true
         }
     },
     "required": ["url", "waitUntil"]

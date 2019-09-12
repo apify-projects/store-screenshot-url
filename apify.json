@@ -1,12 +1,7 @@
 {
 	"name": "actor-screenshot-url",
-	"actId": null,
-	"version": {
-		"versionNumber": "0.0",
-		"buildTag": "latest",
-		"envVars": [],
-		"sourceType": "TARBALL",
-		"tarballUrl": null
-	},
-	"template": "basic"
+	"template": "basic",
+	"version": "0.0",
+	"buildTag": "latest",
+	"env": null
 }

@@ -23,6 +23,7 @@ async function parseInput(input) {
 allowed values: "${waitUntilOptions.join('", "')}"`);
     }
     parsedInput.waitUntil = input.waitUntil;
+    parsedInput.scrollToBottom = input.scrollToBottom;
 
     // Process viewportWidth
     if (!_.isNumber(input.viewportWidth)) crash(`Viewport width "${input.viewportWidth}" is not a number.`);
