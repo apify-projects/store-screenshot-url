@@ -12,6 +12,7 @@ Input of this actor should be JSON containing filter specification. Allowed filt
 | waitUntil | String | When should the screenshot be taken | One of:<br>"load"<br>"domcontentloaded"<br>"networkidle2"<br>"networkidle0" |
 | delay | Number | Delay before the screenshot is taken after the waitUntil finishes | Minimum: 0, Maximum: 3600000 |
 | viewportWidth | Number | How wide should the website and screenshot be | Minimum: 100, Maximum: 3840 |
+| scrollToBottom | Boolean | Scroll to bottom so lazy load items can load | Default: false |
 
 For more information about `waitUntil` parameter please take a look at documentation of [Puppeteers page.goto function](https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagegotourl-options).
 
