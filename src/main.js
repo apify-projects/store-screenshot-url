@@ -23,6 +23,22 @@ Apify.main(async () => {
     console.log('Waiting for the page');
     await page.goto(url, { waitUntil, timeout: 3600000 });
 
+    var h1_visible = await page.evaluate(() => {
+        const $ = window.$; //otherwise the transpiler will rename it and won't work
+        return $('h1').is(":visible");
+    });
+
+    console.log("h1_visible", h1_visible);
+    await Apify.setValue("META", {
+        h1_visible: h1_visible
+    });
+
+    const dataset = await Apify.openDataset('my-cool-dataset');
+    // Add data to dataset
+    await dataset.pushData({
+        h1_visible: h1_visible
+    });
+
     // Scroll to bottom before delay so that delay is enough time for images to load
     if (scrollToBottom) {
         console.log('Scrolling to the bottom');
@@ -54,7 +70,7 @@ async function autoScroll(page){
             var timer = setInterval(() => {
                 var scrollHeight = document.body.scrollHeight;
                 window.scrollBy(0, distance);
-                totalHeight += distance;
+                totalHeight =   stance;
 
                 if(totalHeight >= scrollHeight){
                     clearInterval(timer);
