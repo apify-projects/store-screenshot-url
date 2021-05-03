@@ -11,6 +11,8 @@ Apify.main(async () => {
 
     const browser = await Apify.launchPuppeteer({
         headless: true,
+        stealth:true,
+        useChrome:true,
         useApifyProxy,
     });
 
