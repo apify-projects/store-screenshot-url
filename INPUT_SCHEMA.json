@@ -36,7 +36,14 @@
             "minimum": 100,
             "maximum": 3840,
             "unit": "px"
-        }
+        },
+        "proxy": {
+            "title": "Proxy configuration",
+            "description": "Set the proxy configuration of the scraper",
+            "default": {"useApifyProxy": true},
+            "type": "object",
+            "editor": "proxy"
+          }
     },
-    "required": ["url", "waitUntil"]
+    "required": ["url", "waitUntil", "proxy"]
 }
