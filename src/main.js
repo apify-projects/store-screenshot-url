@@ -2,6 +2,7 @@ const Apify = require('apify');
 const parseInput = require('./parseInput');
 const { saveScreenshot } = require('./utils');
 
+const { log } = Apify.utils;
 const { APIFY_DEFAULT_KEY_VALUE_STORE_ID } = process.env;
 
 Apify.main(async () => {
@@ -12,7 +13,9 @@ Apify.main(async () => {
     const { proxy } = await Apify.getInput();
     const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
 
-    const proxyUrl = proxyConfiguration.newUrl();
+    let proxyUrl;
+    if (proxyConfiguration) proxyUrl = proxyConfiguration.newUrl();
+    
     const browser = await Apify.launchPuppeteer({
             useChrome: true,
             proxyUrl,
@@ -21,21 +24,21 @@ Apify.main(async () => {
             }
         }
     );
-    console.log('Launching new page');
+    log.info('Launching new page');
     const page = await browser.newPage();
-    console.log('Changing viewport width');
+    log.info('Changing viewport width');
     await page.setViewport({ width, height: 1080 });
-    console.log('Waiting for the page');
+    log.info('Waiting for the page');
     await page.goto(url, { waitUntil, timeout: 3600000 });
-    console.log('Page is ready for screenshot');
+    log.info('Page is ready for screenshot');
     if (delay > 0) {
-        console.log(`Waiting ${delay}ms as specified in input`);
+        log.info(`Waiting ${delay}ms as specified in input`);
         await page.waitFor(delay);
     }
-    console.log('Saving screenshot');
+    log.info('Saving screenshot');
     await saveScreenshot(page);
-    console.log('Screenshot saved you can view it here:');
-    console.log(`https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/OUTPUT?disableRedirect=true`);
+    log.info('Screenshot saved you can view it here:');
+    log.info(`https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/OUTPUT?disableRedirect=true`);
     await page.close();
     await browser.close();
 });
