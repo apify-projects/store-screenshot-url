@@ -40,10 +40,10 @@
         "proxy": {
             "title": "Proxy configuration",
             "description": "Set the proxy configuration of the scraper",
-            "default": {"useApifyProxy": true},
+            "default": {"useApifyProxy": false},
             "type": "object",
             "editor": "proxy"
           }
     },
-    "required": ["url", "waitUntil", "proxy"]
+    "required": ["url", "waitUntil"]
 }
