@@ -7,13 +7,20 @@ const { APIFY_DEFAULT_KEY_VALUE_STORE_ID } = process.env;
 Apify.main(async () => {
     // Load query from input
     const input = await Apify.getValue('INPUT');
-    const { url, useApifyProxy, waitUntil, delay, width } = await parseInput(input);
+    const { url, waitUntil, delay, width } = await parseInput(input);
 
+    const { proxy } = await Apify.getInput();
+    const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
+
+    const proxyUrl = proxyConfiguration.newUrl();
     const browser = await Apify.launchPuppeteer({
-        headless: true,
-        useApifyProxy,
-    });
-
+            useChrome: true,
+            proxyUrl,
+            launchOptions: {
+                headless: true,
+            }
+        }
+    );
     console.log('Launching new page');
     const page = await browser.newPage();
     console.log('Changing viewport width');
@@ -32,3 +39,4 @@ Apify.main(async () => {
     await page.close();
     await browser.close();
 });
+
