@@ -6,7 +6,7 @@
         "url": {
             "title": "URL",
             "type": "string",
-            "description": "What to search Kickstarter for",
+            "description": "What URL you want to take screenshot of.",
             "editor": "textfield",
             "prefill": "https://www.apify.com/"
         },
@@ -14,7 +14,8 @@
             "title": "Wait until",
             "type": "string",
             "description": "Control's when will the browser take a screenshot",
-            "default": "All",
+            "default": "networkidle0",
+            "prefill": "networkidle0",
             "enum": ["load", "domcontentloaded", "networkidle2", "networkidle0"],
             "enumTitles": ["Page is opened", "Content of the page is loaded", "Network is nearly idle", "Network is idle"],
             "editor": "select"
@@ -24,6 +25,7 @@
             "type": "integer",
             "description": "Add's delay before a screenshot is taken. Mimimum is 0, maximum is 5 minutes (3600000ms)",
             "default": 0,
+            "prefill": 0,
             "minimum": 0,
             "maximum": 3600000,
             "unit": "ms"
@@ -41,6 +43,7 @@
             "title": "Proxy configuration",
             "description": "Set the proxy configuration of the scraper",
             "default": {"useApifyProxy": false},
+            "prefill": {"useApifyProxy": true},
             "type": "object",
             "editor": "proxy"
           }
