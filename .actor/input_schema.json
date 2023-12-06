@@ -71,7 +71,7 @@
             "type": "integer",
             "description": "Specify the maximum wait time (in milliseconds) for the network to become idle after scrolling to the bottom of the page before taking the screenshot, this option is used to make sure handler doesn't get stuck for some pages. This option is only used if 'Wait for Network Idle After Scrolling' is enabled.",
             "default": 30000,
-            "minimum": 0,
+            "minimum": 1000,
             "maximum": 3600000,
             "unit": "ms"
         },

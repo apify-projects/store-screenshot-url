@@ -1,3 +1,9 @@
+## 2023-12-06
+*Improvements*
+- SDK update to 3;
+- Generate output dataset
+- Add new input parameters: `scrollToBottom`, `delayAfterScrolling`, `waitUntilNetworkIdleAfterScroll`, and `waitUntilNetworkIdleAfterScrollTimeout`
+
 ## 2021-08-09
 *Improvements*
 - SDK update to 2.0.1;
