@@ -1,0 +1,51 @@
+{
+    "actorSpecification": 1,
+    "name": "screenshot-url",
+    "title": "Website Screenshot Generator",
+    "description": "Crawlee and Puppeteer project in JavaScript.",
+    "version": "0.0",
+    "meta": {
+        "templateId": "js-crawlee-puppeteer-chrome"
+    },
+    "input": "./input_schema.json",
+    "dockerfile": "./Dockerfile",
+    "storages": {
+        "dataset": {
+            "actorSpecification": 1,
+            "title": "Output",
+            "description": "Too see all scraped properties, export the whole dataset or select All fields instead of Overview",
+            "views": {
+                "overview": {
+                    "title": "Overview",
+                    "description": "Selected fields from the dataset",
+                    "transformation": {
+                        "fields": [
+                            "url",
+                            "screenshotUrl"
+                        ]
+                    },
+                    "display": {
+                        "component": "table",
+                        "columns": [
+                            {
+								"label": "URL",
+								"format": "link",
+								"field": "url"
+							},
+                            {
+								"label": "Screenshot URL",
+								"format": "link",
+								"field": "screenshotUrl"
+							},
+                            {
+                                "label": "Screenshot Image",
+                                "format": "image",
+                                "field": "screenshotUrl"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
