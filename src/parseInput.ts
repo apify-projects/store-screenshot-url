@@ -1,18 +1,17 @@
-import { Actor, log } from "apify";
-import _ from "lodash";
-import * as url from "url";
+import { Actor, ProxyConfigurationOptions, log } from "apify";
 
 import type { PuppeteerLifeCycleEvent } from "puppeteer";
+import { RequestList, Request } from "crawlee";
 
 import type { Input } from "./types.js";
 
 const crash = async (errorMessage: string) => {
-    log.info(errorMessage);
+    log.error(errorMessage);
     await Actor.fail(errorMessage);
 };
 
 export async function parseInput(input: Input): Promise<{
-    url: string;
+    urls: string[];
     waitUntil: PuppeteerLifeCycleEvent;
     width: number;
     delay: number;
@@ -20,12 +19,16 @@ export async function parseInput(input: Input): Promise<{
     delayAfterScrolling: number;
     waitUntilNetworkIdleAfterScroll: boolean;
     waitUntilNetworkIdleAfterScrollTimeout: number;
+    proxy: (ProxyConfigurationOptions & {
+        useApifyProxy?: boolean | undefined;
+    }) | undefined;
 }> {
     if (!input) {
         await crash("Did not receive input. Please make sure that INPUT is stored in Key-Value store");
     }
+
     const parsedInput: {
-        url: string;
+        urls: string[];
         waitUntil: PuppeteerLifeCycleEvent;
         width: number;
         delay: number;
@@ -33,25 +36,54 @@ export async function parseInput(input: Input): Promise<{
         delayAfterScrolling: number;
         waitUntilNetworkIdleAfterScroll: boolean;
         waitUntilNetworkIdleAfterScrollTimeout: number;
+        proxy: (ProxyConfigurationOptions & {
+            useApifyProxy?: boolean | undefined;
+        }) | undefined;
     } = {
-        url: "",
+        urls: [],
         waitUntil: "networkidle0",
         width: 0,
         delay: 0,
         scrollToBottom: false,
         delayAfterScrolling: 0,
         waitUntilNetworkIdleAfterScroll: false,
-        waitUntilNetworkIdleAfterScrollTimeout: 30000,
+        waitUntilNetworkIdleAfterScrollTimeout: 30,
+        proxy: input.proxy || { useApifyProxy: true }
     };
 
     // Process url
-    if (!input.url) crash("Input is missing url field");
-    parsedInput.url = input.url.startsWith("http") ? input.url : `http://${input.url}`;
-    try {
-        url.parse(parsedInput.url);
-    } catch (error) {
-        await crash(`Provided url "${parsedInput.url}" is not valid.`);
+    if (!input.url && !input.urls?.length) crash("Input is missing url field");
+
+    const startUrls = [];
+    if (input.url) startUrls.push(input.url);
+    if (input.urls?.length) startUrls.push(...input.urls);
+
+    const requestList = await RequestList.open('START_URLS', startUrls || []);
+
+    let req: Request | null = await requestList.fetchNextRequest();
+
+    while (req !== null) {
+        parsedInput.urls.push(req.url);
+
+        req = await requestList.fetchNextRequest();
     }
+
+    parsedInput.urls = parsedInput.urls.flatMap((u) => {
+        let url = u.trim();
+
+        if (!url.startsWith("http")) {
+            url = `http://${url}`;
+        }
+
+        try {
+            new URL(url);
+        } catch (error) {
+            crash(`Skipping url "${url}" because it is not valid.`);
+            return [];
+        }
+
+        return [url];
+    });
 
     // Process waitUntil
     const waitUntilOptions: PuppeteerLifeCycleEvent[] = ["load", "domcontentloaded", "networkidle2", "networkidle0"];
@@ -62,8 +94,7 @@ export async function parseInput(input: Input): Promise<{
 
     if (!isWaitUntilOption(input.waitUntil)) {
         await crash(
-            `Value in parameter waitUntil - "${
-                input.waitUntil
+            `Value in parameter waitUntil - "${input.waitUntil
             }" - is not one of the allowed values: "${waitUntilOptions.join('", "')}"`
         );
     }
@@ -71,7 +102,7 @@ export async function parseInput(input: Input): Promise<{
     parsedInput.waitUntil = input.waitUntil as PuppeteerLifeCycleEvent;
 
     // Process viewportWidth
-    if (!_.isNumber(input.viewportWidth)) {
+    if (!input.viewportWidth && typeof input.viewportWidth !== "number") {
         await crash(`Viewport width "${input.viewportWidth}" is not a number.`);
     }
     if (input.viewportWidth < 100) {
@@ -84,7 +115,7 @@ export async function parseInput(input: Input): Promise<{
     parsedInput.width = input.viewportWidth;
 
     // Process delay
-    if (!_.isNumber(input.delay)) {
+    if (!input.delay && typeof input.delay !== "number") {
         await crash(`Delay "${input.delay}" is not a number.`);
     }
     if (input.delay < 0) {
@@ -98,7 +129,11 @@ export async function parseInput(input: Input): Promise<{
     parsedInput.scrollToBottom = input.scrollToBottom || false;
     parsedInput.waitUntilNetworkIdleAfterScroll = input.waitUntilNetworkIdleAfterScroll || false;
     parsedInput.delayAfterScrolling = input.delayAfterScrolling || 0;
-    parsedInput.waitUntilNetworkIdleAfterScrollTimeout = input.waitUntilNetworkIdleAfterScrollTimeout || 30000;
+    parsedInput.waitUntilNetworkIdleAfterScrollTimeout = input.waitUntilNetworkIdleAfterScrollTimeout || 30;
+
+    if (!parsedInput.urls.length) {
+        await crash("No valid urls found.");
+    }
 
     return parsedInput;
 }

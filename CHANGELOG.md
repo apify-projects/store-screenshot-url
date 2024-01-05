@@ -1,3 +1,7 @@
+## 2024-01-05
+*Improvements*
+- Support multiple Urls, added new input parameters: `urls`
+
 ## 2023-12-06
 *Improvements*
 - SDK update to 3;

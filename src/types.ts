@@ -1,7 +1,8 @@
-import { ProxyConfiguration } from "crawlee";
+import { ProxyConfigurationOptions } from "crawlee";
 
 export type Input = {
     url: string;
+    urls: string[];
     waitUntil: string;
     viewportWidth: number;
     delay: number;
@@ -9,5 +10,7 @@ export type Input = {
     delayAfterScrolling: number;
     waitUntilNetworkIdleAfterScrollTimeout: number;
     waitUntilNetworkIdleAfterScroll: boolean;
-    proxy: ProxyConfiguration;
+    proxy: (ProxyConfigurationOptions & {
+        useApifyProxy?: boolean | undefined;
+    }) | undefined;
 };

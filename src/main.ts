@@ -4,14 +4,18 @@ import { sleep, PuppeteerCrawler } from "crawlee";
 import { parseInput } from "./parseInput.js";
 
 import type { Input } from "./types.js";
+import { calculateRequestHandlerTimeoutSecs, generateUrlStoreKey } from "./utils.js";
 
 const { APIFY_DEFAULT_KEY_VALUE_STORE_ID } = process.env;
+
+const NAVIGATION_TIMEOUT_SECS = 3600;
+const TIMEOUT_MS = 3600000;
 
 await Actor.init();
 const input = (await Actor.getInput()) as Input;
 
 const {
-    url,
+    urls,
     waitUntil,
     delay,
     width,
@@ -19,55 +23,34 @@ const {
     delayAfterScrolling,
     waitUntilNetworkIdleAfterScroll,
     waitUntilNetworkIdleAfterScrollTimeout,
+    proxy,
 } = await parseInput(input);
-
-const { proxy } = (await Actor.getInput()) as any;
-const proxyConfiguration = await Actor.createProxyConfiguration(proxy);
-
-const calculateRequestHandlerTimeoutSecs = (
-    scrollToBottom: boolean,
-    waitUntilNetworkIdleAfterScroll: boolean,
-    waitUntilNetworkIdleAfterScrollTimeout: number,
-    delayAfterScrolling: number
-): number => {
-    const delaySeconds  = (delay * 1000);
-    
-    if (!scrollToBottom) {
-        return 60 + delaySeconds;
-    }
-
-    if (waitUntilNetworkIdleAfterScroll) {
-        return 60 + (waitUntilNetworkIdleAfterScrollTimeout * 1000) + delaySeconds;
-    }
-
-    return 60 + (delayAfterScrolling * 1000) + delaySeconds;
-};
 
 const requestHandlerTimeoutSecs = calculateRequestHandlerTimeoutSecs(
     scrollToBottom,
     waitUntilNetworkIdleAfterScroll,
     waitUntilNetworkIdleAfterScrollTimeout,
-    delayAfterScrolling
+    delayAfterScrolling,
+    delay,
 );
 
 const puppeteerCrawler = new PuppeteerCrawler({
     launchContext: {
         useChrome: true,
     },
-    proxyConfiguration,
-    navigationTimeoutSecs: 3600,
+    proxyConfiguration: await Actor.createProxyConfiguration(proxy),
+    navigationTimeoutSecs: NAVIGATION_TIMEOUT_SECS,
     requestHandlerTimeoutSecs,
+    headless: Actor.isAtHome(),
     preNavigationHooks: [
         async ({ page }, goToOptions) => {
             goToOptions!.waitUntil = waitUntil;
-            goToOptions!.timeout = 3600000;
+            goToOptions!.timeout = TIMEOUT_MS;
 
-            log.info("Changing viewport width");
             await page.setViewport({ width, height: 1080 });
         },
     ],
     requestHandler: async ({ page }) => {
-        log.info("Page is ready for screenshot");
         if (delay > 0) {
             log.info(`Waiting ${delay}ms as specified in input`);
             await sleep(delay);
@@ -93,21 +76,21 @@ const puppeteerCrawler = new PuppeteerCrawler({
             }
         }
 
-        log.info("Saving screenshot");
+        log.info("Saving screenshot...");
+        const screenshotKey = input.urls?.length ? generateUrlStoreKey(page.url()) : 'screenshot';
         const screenshotBuffer = await page.screenshot({ fullPage: true });
-        await Actor.setValue("screenshot", screenshotBuffer, { contentType: "image/png" });
-        const screenshotUrl = `https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/screenshot?disableRedirect=true`;
-        log.info("Screenshot saved you can view it here:");
-        log.info(screenshotUrl);
+        await Actor.setValue(screenshotKey, screenshotBuffer, { contentType: "image/png" });
+        const screenshotUrl = `https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/${screenshotKey}?disableRedirect=true`;
+        log.info(`Screenshot saved, you can view it here: \n${screenshotUrl}`);
 
         await Actor.pushData({
             url: page.url(),
             screenshotUrl,
+            screenshotKey,
         });
     },
 });
 
-log.info("Launching new page...");
-await puppeteerCrawler.run([url]);
+await puppeteerCrawler.run(urls);
 
 await Actor.exit();

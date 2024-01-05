@@ -4,11 +4,18 @@
     "schemaVersion": 1,
     "properties": {
         "url": {
-            "title": "URL",
+            "title": "URL (deprecated)",
             "type": "string",
             "description": "What URL you want to take screenshot of.",
             "editor": "textfield",
             "prefill": "https://www.apify.com/"
+        },
+        "urls": {
+            "title": "List of URLs",
+            "description": "List of URLs you want to take screenshots of.",
+            "prefill": [ { "url": "https://www.apify.com/" } ],
+            "type": "array",
+            "editor": "requestListSources"
         },
         "waitUntil": {
             "title": "Wait until",
@@ -85,5 +92,5 @@
             "sectionCaption": "Proxy Configuration"
         }
     },
-    "required": ["url", "waitUntil"]
+    "required": ["waitUntil"]
 }
