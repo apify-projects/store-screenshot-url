@@ -59,12 +59,17 @@ const puppeteerCrawler = new PuppeteerCrawler({
         if (scrollToBottom) {
             log.info("Scrolling to bottom of the page");
             try {
-                await page.evaluate(() => {
-                    window.scrollTo(0, document.body.scrollHeight);
+                await page.evaluate(async () => {
+                    let i = 0;
+                    while (i < document.body.scrollHeight) {
+                        i += 250;
+                        await new Promise((resolve) => setTimeout(resolve, 50));
+                        window.scrollTo(0, i);
+                    }
                 });
                 if (waitUntilNetworkIdleAfterScroll) {
                     log.info("Waiting until network is idle");
-                    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {
+                    await page.waitForNetworkIdle({ timeout: waitUntilNetworkIdleAfterScrollTimeout }).catch(() => {
                         log.warning("Waiting until network is idle after scroll failed!");
                     });
                 } else if (delayAfterScrolling > 0) {
