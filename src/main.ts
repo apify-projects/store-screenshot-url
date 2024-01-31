@@ -24,6 +24,7 @@ const {
     waitUntilNetworkIdleAfterScroll,
     waitUntilNetworkIdleAfterScrollTimeout,
     proxy,
+    selectorsToHide,
 } = await parseInput(input);
 
 const requestHandlerTimeoutSecs = calculateRequestHandlerTimeoutSecs(
@@ -72,7 +73,8 @@ const puppeteerCrawler = new PuppeteerCrawler({
                     await page.waitForNetworkIdle({ timeout: waitUntilNetworkIdleAfterScrollTimeout }).catch(() => {
                         log.warning("Waiting until network is idle after scroll failed!");
                     });
-                } else if (delayAfterScrolling > 0) {
+                }
+                if (delayAfterScrolling > 0) {
                     log.info(`Waiting ${delayAfterScrolling}ms after scroll as specified in input`);
                     await sleep(delayAfterScrolling);
                 }
@@ -80,6 +82,12 @@ const puppeteerCrawler = new PuppeteerCrawler({
                 log.warning("Scrolling to bottom of the page failed!");
             }
         }
+
+        await page.$$eval(selectorsToHide, (elements) => {
+            for (const element of elements) {
+                (element as HTMLElement).style.display = "none";
+            }
+        });
 
         log.info("Saving screenshot...");
         const screenshotKey = input.urls?.length ? generateUrlStoreKey(page.url()) : 'screenshot';

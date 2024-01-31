@@ -13,4 +13,5 @@ export type Input = {
     proxy: (ProxyConfigurationOptions & {
         useApifyProxy?: boolean | undefined;
     }) | undefined;
+    selectorsToHide?: string;
 };

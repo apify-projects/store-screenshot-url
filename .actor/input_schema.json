@@ -89,7 +89,14 @@
             "prefill": { "useApifyProxy": true },
             "type": "object",
             "editor": "proxy",
-            "sectionCaption": "Proxy Configuration"
+            "sectionCaption": "Advanced settings"
+        },
+        "selectorsToHide": {
+            "title": "Selectors to hide",
+            "description": "List of selectors to hide before taking a screenshot",
+            "default": "",
+            "type": "string",
+            "editor": "textarea"
         }
     },
     "required": ["waitUntil"]
