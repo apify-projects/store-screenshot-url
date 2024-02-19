@@ -3,13 +3,6 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
-        "url": {
-            "title": "URL (deprecated)",
-            "type": "string",
-            "description": "What URL you want to take screenshot of.",
-            "editor": "textfield",
-            "prefill": "https://www.apify.com/"
-        },
         "urls": {
             "title": "List of URLs",
             "description": "List of URLs you want to take screenshots of.",
