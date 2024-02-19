@@ -83,11 +83,13 @@ const puppeteerCrawler = new PuppeteerCrawler({
             }
         }
 
-        await page.$$eval(selectorsToHide, (elements) => {
-            for (const element of elements) {
-                (element as HTMLElement).style.display = "none";
-            }
-        });
+        if (selectorsToHide?.length) {
+            await page.$$eval(selectorsToHide, (elements) => {
+                for (const element of elements) {
+                    (element as HTMLElement).style.display = "none";
+                }
+            });
+        }
 
         log.info("Saving screenshot...");
         const screenshotKey = input.urls?.length ? generateUrlStoreKey(page.url()) : 'screenshot';

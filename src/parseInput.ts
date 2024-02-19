@@ -51,7 +51,7 @@ export async function parseInput(input: Input): Promise<{
         waitUntilNetworkIdleAfterScroll: false,
         waitUntilNetworkIdleAfterScrollTimeout: 30,
         proxy: input.proxy || { useApifyProxy: true },
-        selectorsToHide: input.selectorsToHide || "",
+        selectorsToHide: input.selectorsToHide?.trim() || "",
     };
 
     // Process url
