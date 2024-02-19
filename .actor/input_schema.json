@@ -21,8 +21,7 @@
             "title": "Wait until",
             "type": "string",
             "description": "Control's when will the browser take a screenshot",
-            "default": "networkidle0",
-            "prefill": "networkidle0",
+            "prefill": "load",
             "enum": ["load", "domcontentloaded", "networkidle2", "networkidle0"],
             "enumTitles": [
                 "Page is opened",

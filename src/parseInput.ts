@@ -43,7 +43,7 @@ export async function parseInput(input: Input): Promise<{
         selectorsToHide: string;
     } = {
         urls: [],
-        waitUntil: "networkidle0",
+        waitUntil: "load",
         width: 0,
         delay: 0,
         scrollToBottom: false,
