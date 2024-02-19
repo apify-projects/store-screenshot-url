@@ -45,7 +45,7 @@
             "title": "Width",
             "type": "integer",
             "description": "How wide should the website's viewport be",
-            "default": 1280,
+            "prefill": 1280,
             "minimum": 100,
             "maximum": 3840,
             "unit": "px"
@@ -61,7 +61,7 @@
             "title": "Delay After Scrolling",
             "type": "integer",
             "description": "Specify the delay (in milliseconds) after scrolling to the bottom of the page before taking the screenshot. This option is only used if 'Wait for Network Idle After Scrolling' is not enabled.",
-            "default": 2500,
+            "prefill": 2500,
             "minimum": 0,
             "maximum": 3600000,
             "unit": "ms"
