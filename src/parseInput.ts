@@ -22,6 +22,7 @@ export async function parseInput(input: Input): Promise<{
     proxy: (ProxyConfigurationOptions & {
         useApifyProxy?: boolean | undefined;
     }) | undefined;
+    selectorsToHide: string;
 }> {
     if (!input) {
         await crash("Did not receive input. Please make sure that INPUT is stored in Key-Value store");
@@ -39,16 +40,18 @@ export async function parseInput(input: Input): Promise<{
         proxy: (ProxyConfigurationOptions & {
             useApifyProxy?: boolean | undefined;
         }) | undefined;
+        selectorsToHide: string;
     } = {
         urls: [],
-        waitUntil: "networkidle0",
+        waitUntil: "load",
         width: 0,
         delay: 0,
         scrollToBottom: false,
         delayAfterScrolling: 0,
         waitUntilNetworkIdleAfterScroll: false,
         waitUntilNetworkIdleAfterScrollTimeout: 30,
-        proxy: input.proxy || { useApifyProxy: true }
+        proxy: input.proxy || { useApifyProxy: true },
+        selectorsToHide: input.selectorsToHide || "",
     };
 
     // Process url
