@@ -20,7 +20,7 @@
                 "Page is opened",
                 "Content of the page is loaded",
                 "Network is nearly idle",
-                "Network is idle"
+                "Network is idle (Dangerous - can stall forever)"
             ],
             "editor": "select"
         },
