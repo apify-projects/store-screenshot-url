@@ -3,7 +3,7 @@ import { Actor, ProxyConfigurationOptions, log } from "apify";
 import type { PuppeteerLifeCycleEvent } from "puppeteer";
 import { RequestList, Request } from "crawlee";
 
-import type { Input } from "./types.js";
+import { FORMATS, type Format, type Input } from "./types.js";
 
 const crash = async (errorMessage: string) => {
     log.error(errorMessage);
@@ -12,6 +12,7 @@ const crash = async (errorMessage: string) => {
 
 export async function parseInput(input: Input): Promise<{
     urls: string[];
+    format: Format;
     waitUntil: PuppeteerLifeCycleEvent;
     width: number;
     delay: number;
@@ -30,6 +31,7 @@ export async function parseInput(input: Input): Promise<{
 
     const parsedInput: {
         urls: string[];
+        format: Format;
         waitUntil: PuppeteerLifeCycleEvent;
         width: number;
         delay: number;
@@ -43,6 +45,7 @@ export async function parseInput(input: Input): Promise<{
         selectorsToHide: string;
     } = {
         urls: [],
+        format: 'png',
         waitUntil: "load",
         width: 0,
         delay: 0,
@@ -87,6 +90,17 @@ export async function parseInput(input: Input): Promise<{
 
         return [url];
     });
+
+    if (input.format) {
+        if (FORMATS.includes(input.format)) {
+            parsedInput.format = input.format;
+        } else {
+            log.warning(
+                'Unsupported input format, using default',
+                { format: input.format, defaultFormat: parsedInput.format }
+            );
+        }
+    }
 
     // Process waitUntil
     const waitUntilOptions: PuppeteerLifeCycleEvent[] = ["load", "domcontentloaded", "networkidle2", "networkidle0"];

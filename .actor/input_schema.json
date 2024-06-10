@@ -6,16 +6,40 @@
         "urls": {
             "title": "List of URLs",
             "description": "List of URLs you want to take screenshots of.",
-            "prefill": [ { "url": "https://www.apify.com/" } ],
+            "prefill": [
+                {
+                    "url": "https://www.apify.com/"
+                }
+            ],
             "type": "array",
             "editor": "requestListSources"
+        },
+        "format": {
+            "title": "Format",
+            "description": "Screenshot file format.",
+            "type": "string",
+            "editor": "select",
+            "default": "png",
+            "enum": [
+                "png",
+                "pdf"
+            ],
+            "enumTitles": [
+                "PNG",
+                "PDF"
+            ]
         },
         "waitUntil": {
             "title": "Wait until",
             "type": "string",
             "description": "Control's when will the browser take a screenshot",
             "prefill": "load",
-            "enum": ["load", "domcontentloaded", "networkidle2", "networkidle0"],
+            "enum": [
+                "load",
+                "domcontentloaded",
+                "networkidle2",
+                "networkidle0"
+            ],
             "enumTitles": [
                 "Page is opened",
                 "Content of the page is loaded",
@@ -77,8 +101,12 @@
         "proxy": {
             "title": "Proxy configuration",
             "description": "Set the proxy configuration of the scraper",
-            "default": { "useApifyProxy": true },
-            "prefill": { "useApifyProxy": true },
+            "default": {
+                "useApifyProxy": true
+            },
+            "prefill": {
+                "useApifyProxy": true
+            },
             "type": "object",
             "editor": "proxy",
             "sectionCaption": "Advanced settings"
@@ -91,5 +119,8 @@
             "editor": "textarea"
         }
     },
-    "required": ["waitUntil"]
+    "required": [
+        "waitUntil",
+        "viewportWidth"
+    ]
 }

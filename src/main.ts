@@ -16,6 +16,7 @@ const input = (await Actor.getInput()) as Input;
 
 const {
     urls,
+    format,
     waitUntil,
     delay,
     width,
@@ -37,7 +38,7 @@ const requestHandlerTimeoutSecs = calculateRequestHandlerTimeoutSecs(
 
 const puppeteerCrawler = new PuppeteerCrawler({
     launchContext: {
-        useChrome: true,
+        useChrome: false,
     },
     proxyConfiguration: await Actor.createProxyConfiguration(proxy),
     navigationTimeoutSecs: NAVIGATION_TIMEOUT_SECS,
@@ -93,8 +94,25 @@ const puppeteerCrawler = new PuppeteerCrawler({
 
         log.info("Saving screenshot...");
         const screenshotKey = input.urls?.length ? generateUrlStoreKey(page.url()) : 'screenshot';
-        const screenshotBuffer = await page.screenshot({ fullPage: true });
-        await Actor.setValue(screenshotKey, screenshotBuffer, { contentType: "image/png" });
+
+        let screenshotBuffer: Buffer
+        let contentType: string
+
+        switch (format) {
+            case 'png':
+                screenshotBuffer = await page.screenshot({ fullPage: true });
+                contentType = 'image/png'
+                break;
+            case 'pdf':
+                // `page.pdf` crashes with puppeteer 22: downgraded to 21
+                screenshotBuffer = await page.pdf();
+                contentType = 'application/pdf'
+                break;
+            default:
+                throw new Error(`Unsupported format: ${format}`);
+        }
+
+        await Actor.setValue(screenshotKey, screenshotBuffer, { contentType });
         const screenshotUrl = `https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/${screenshotKey}?disableRedirect=true`;
         log.info(`Screenshot saved, you can view it here: \n${screenshotUrl}`);
 
