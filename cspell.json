@@ -1,0 +1,12 @@
+{
+    "version": "0.2",
+    "ignorePaths": ["cspell-words.txt"],
+    "dictionaryDefinitions": [{
+        "name": "project-words",
+        "path": "./cspell-words.txt"
+    }],
+    "dictionaries": ["project-words"],
+    "words": [],
+    "ignoreWords": [],
+    "import": []
+}
