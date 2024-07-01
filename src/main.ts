@@ -1,32 +1,59 @@
 import { Actor, log } from "apify";
-import { sleep, PuppeteerCrawler } from "crawlee";
+import { sleep, PuppeteerCrawler, RequestList } from "crawlee";
 
-import { parseInput } from "./parseInput.js";
-
-import type { Input } from "./types.js";
-import { calculateRequestHandlerTimeoutSecs, generateUrlStoreKey } from "./utils.js";
+import { isWaitUntilOption, type Input, WAIT_UNTIL_OPTIONS, isFormat, FORMATS } from "./types.js";
+import { calculateRequestHandlerTimeoutSecs, generateScreenshotName } from "./utils.js";
 
 const { APIFY_DEFAULT_KEY_VALUE_STORE_ID } = process.env;
 
 const NAVIGATION_TIMEOUT_SECS = 3600;
-const TIMEOUT_MS = 3600000;
+const TIMEOUT_MS = 3_600_000;
 
 await Actor.init();
-const input = (await Actor.getInput()) as Input;
+const input = await Actor.getInput<Input>() ?? {} as Input;
 
 const {
-    urls,
-    format,
-    waitUntil,
+    urls = [],
+    format = 'png',
+    viewportWidth,
+    scrollToBottom = false,
+    delayAfterScrolling = 0,
     delay,
-    width,
-    scrollToBottom,
-    delayAfterScrolling,
-    waitUntilNetworkIdleAfterScroll,
-    waitUntilNetworkIdleAfterScrollTimeout,
-    proxy,
+    waitUntil,
+    waitUntilNetworkIdleAfterScroll = false,
+    waitUntilNetworkIdleAfterScrollTimeout = 30,
+    proxy = { useApifyProxy: true },
     selectorsToHide,
-} = await parseInput(input);
+} = input;
+
+if (!isFormat(format)) {
+    throw new Error(`Format must be one of: ${FORMATS.join(', ')}.`)
+}
+
+if (viewportWidth === undefined || viewportWidth < 100 || viewportWidth > 3840) {
+    throw new Error(`Viewport must be defined and inside range 100-3840 (px). Received: ${viewportWidth}`)
+}
+
+if (delay === undefined || delay < 0 || delay > 3_600_000) {
+    throw new Error(`Delay must be defined and inside range 0-3,600,000 (ms). Received: ${delay}`)
+}
+
+if (waitUntil === undefined || !isWaitUntilOption(waitUntil)) {
+    throw new Error(`WaitUntil must be defined and one of: ${WAIT_UNTIL_OPTIONS.join(', ')}. Received: ${waitUntil}`)
+}
+
+const validUrls = urls.filter(({ url }) => {
+    try {
+        const { hostname } = new URL(url);
+        if (!hostname) { return false; }
+        return true;
+    } catch (error) {
+        log.error(`Skipping invalid URL.`, { url });
+        return false;
+    }
+})
+
+const requestList = await RequestList.open('START_URLS', validUrls);
 
 const requestHandlerTimeoutSecs = calculateRequestHandlerTimeoutSecs(
     scrollToBottom,
@@ -44,15 +71,18 @@ const puppeteerCrawler = new PuppeteerCrawler({
     navigationTimeoutSecs: NAVIGATION_TIMEOUT_SECS,
     requestHandlerTimeoutSecs,
     headless: Actor.isAtHome(),
+    requestList,
     preNavigationHooks: [
         async ({ page }, goToOptions) => {
             goToOptions!.waitUntil = waitUntil;
             goToOptions!.timeout = TIMEOUT_MS;
 
-            await page.setViewport({ width, height: 1080 });
+            await page.setViewport({ width: viewportWidth, height: 1080 });
         },
     ],
-    requestHandler: async ({ page }) => {
+    requestHandler: async ({ page, request }) => {
+        const { url } = request;
+
         if (delay > 0) {
             log.info(`Waiting ${delay}ms as specified in input`);
             await sleep(delay);
@@ -93,7 +123,7 @@ const puppeteerCrawler = new PuppeteerCrawler({
         }
 
         log.info("Saving screenshot...");
-        const screenshotKey = input.urls?.length ? generateUrlStoreKey(page.url()) : 'screenshot';
+        const screenshotKey = generateScreenshotName(url);
 
         let screenshotBuffer: Buffer
         let contentType: string

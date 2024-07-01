@@ -51,7 +51,7 @@
         "delay": {
             "title": "Delay before screenshot",
             "type": "integer",
-            "description": "Add's delay before a screenshot is taken. Mimimum is 0, maximum is 5 minutes (3600000ms)",
+            "description": "Add's delay before a screenshot is taken. Minimum is 0, maximum is 5 minutes (3600000ms)",
             "default": 0,
             "prefill": 0,
             "minimum": 0,
@@ -121,6 +121,7 @@
     },
     "required": [
         "waitUntil",
+        "delay",
         "viewportWidth"
     ]
 }
