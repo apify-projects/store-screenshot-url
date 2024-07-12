@@ -52,7 +52,9 @@ const puppeteerCrawler = new PuppeteerCrawler({
             await page.setViewport({ width, height: 1080 });
         },
     ],
-    requestHandler: async ({ page }) => {
+    requestHandler: async ({ page, request }) => {
+        const { url } = request;
+
         if (delay > 0) {
             log.info(`Waiting ${delay}ms as specified in input`);
             await sleep(delay);
@@ -117,6 +119,7 @@ const puppeteerCrawler = new PuppeteerCrawler({
         log.info(`Screenshot saved, you can view it here: \n${screenshotUrl}`);
 
         await Actor.pushData({
+            startUrl: url,
             url: page.url(),
             screenshotUrl,
             screenshotKey,

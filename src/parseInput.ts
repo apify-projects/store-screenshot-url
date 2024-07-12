@@ -119,7 +119,10 @@ export async function parseInput(input: Input): Promise<{
     parsedInput.waitUntil = input.waitUntil as PuppeteerLifeCycleEvent;
 
     // Process viewportWidth
-    if (!input.viewportWidth && typeof input.viewportWidth !== "number") {
+    if (!input.viewportWidth) {
+        input.viewportWidth = 1280;
+    }
+    if (typeof input.viewportWidth !== "number") {
         await crash(`Viewport width "${input.viewportWidth}" is not a number.`);
     }
     if (input.viewportWidth < 100) {
