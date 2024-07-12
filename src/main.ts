@@ -147,6 +147,7 @@ const puppeteerCrawler = new PuppeteerCrawler({
         log.info(`Screenshot saved, you can view it here: \n${screenshotUrl}`);
 
         await Actor.pushData({
+            startUrl: url,
             url: page.url(),
             screenshotUrl,
             screenshotKey,
