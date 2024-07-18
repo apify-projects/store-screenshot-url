@@ -27,19 +27,19 @@ const {
 } = input;
 
 if (!isFormat(format)) {
-    throw new Error(`Format must be one of: ${FORMATS.join(', ')}.`)
+    throw await Actor.fail(`Format must be one of: ${FORMATS.join(', ')}.`)
 }
 
 if (viewportWidth === undefined || viewportWidth < 100 || viewportWidth > 3840) {
-    throw new Error(`Viewport must be defined and inside range 100-3840 (px). Received: ${viewportWidth}`)
+    throw await Actor.fail(`Viewport must be defined and inside range 100-3840 (px). Received: ${viewportWidth}`)
 }
 
 if (delay === undefined || delay < 0 || delay > 3_600_000) {
-    throw new Error(`Delay must be defined and inside range 0-3,600,000 (ms). Received: ${delay}`)
+    throw await Actor.fail(`Delay must be defined and inside range 0-3,600,000 (ms). Received: ${delay}`)
 }
 
 if (waitUntil === undefined || !isWaitUntilOption(waitUntil)) {
-    throw new Error(`WaitUntil must be defined and one of: ${WAIT_UNTIL_OPTIONS.join(', ')}. Received: ${waitUntil}`)
+    throw await Actor.fail(`WaitUntil must be defined and one of: ${WAIT_UNTIL_OPTIONS.join(', ')}. Received: ${waitUntil}`)
 }
 
 const validUrls = urls.filter(({ url }) => {
