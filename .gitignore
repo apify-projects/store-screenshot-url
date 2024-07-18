@@ -5,5 +5,5 @@ dist
 apify_local
 apify_storage
 node_modules
-package-lock.json
+
 storage
