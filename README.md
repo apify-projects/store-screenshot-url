@@ -1,6 +1,13 @@
-# Actor - Screenshot URL
+Website Screenshot Generator takes a URL of the website and screenshot configuration parameters as input and outputs a screenshot of the website into the Key-Value store and links it to a Dataset.
 
-Actor serving as an example of Input Schema. Takes URL of website and screenshot configuration parameters as input and outputs a screenshot of the website into Key-Value store.
+> The Website Screenshot Generator is a simple Actor that serves primarily as an example Actor. It can be used for many websites and use cases but for more advanced use cases, prefer using [Website Content Crawler](https://apify.com/apify/website-content-crawler) which can also generate screenshots and supports:
+- Sophisticated crawling options
+- Adaptive anti-scraping and rendering strategies
+- Automatic closing of cookie banners
+- Extensive customization options
+
+## Proxy settings
+If you are getting blocked or redirected to a login page, consider using RESIDENTIAL proxy type which can often bypass these blocks. You can set it up in the input configuration.
 
 ## INPUT
 
@@ -23,3 +30,5 @@ For more information about `waitUntil` parameter please take a look at documenta
 
 Once the actor finishes, it will output a screenshot of the website into a file called OUTPUT
 stored in Key-Value store associated with the run.
+
+
