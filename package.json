@@ -3,9 +3,9 @@
 	"version": "0.0.1",
 	"description": "Actor takes a screenshot of a loaded URL.",
 	"dependencies": {
-		"apify": "^3.2.3",
-		"crawlee": "^3.10.5",
-		"puppeteer": "^21.11.0",
+		"apify": "^3.5.0",
+		"crawlee": "^3.15.1",
+		"puppeteer": "^24.24.1",
 		"tsx": "^4.16.0"
 	},
 	"devDependencies": {

@@ -4,8 +4,6 @@ import { sleep, PuppeteerCrawler, RequestList } from "crawlee";
 import { isWaitUntilOption, type Input, WAIT_UNTIL_OPTIONS, isFormat, FORMATS } from "./types.js";
 import { calculateRequestHandlerTimeoutSecs, generateScreenshotName } from "./utils.js";
 
-const { APIFY_DEFAULT_KEY_VALUE_STORE_ID } = process.env;
-
 const NAVIGATION_TIMEOUT_SECS = 3600;
 const TIMEOUT_MS = 3_600_000;
 
@@ -125,7 +123,7 @@ const puppeteerCrawler = new PuppeteerCrawler({
         log.info("Saving screenshot...");
         const screenshotKey = generateScreenshotName(url);
 
-        let screenshotBuffer: Buffer
+        let screenshotBuffer: Uint8Array;
         let contentType: string
 
         switch (format) {
@@ -143,7 +141,13 @@ const puppeteerCrawler = new PuppeteerCrawler({
         }
 
         await Actor.setValue(screenshotKey, screenshotBuffer, { contentType });
-        const screenshotUrl = `https://api.apify.com/v2/key-value-stores/${APIFY_DEFAULT_KEY_VALUE_STORE_ID}/records/${screenshotKey}?disableRedirect=true`;
+
+        const defaultKvStore = await Actor.openKeyValueStore();
+        const screenshotUrlObject = new URL(defaultKvStore.getPublicUrl(screenshotKey));
+        screenshotUrlObject.searchParams.set('disableRedirect', 'true');
+
+        const screenshotUrl = screenshotUrlObject.toString();
+
         log.info(`Screenshot saved, you can view it here: \n${screenshotUrl}`);
 
         await Actor.pushData({
