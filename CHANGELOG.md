@@ -1,3 +1,8 @@
+## 2025-10-15
+*Improvements*
+- Added support for limited permissions
+- Updated dependencies: Apify, Crawlee, and Puppeteer
+
 ## 2024-01-05
 *Improvements*
 - Support multiple Urls, added new input parameters: `urls`
